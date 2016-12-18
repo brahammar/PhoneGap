@@ -18,6 +18,9 @@
  */
 var app = (function () {
     var $content;
+    var imageUrls = [
+    ];
+
     $(document).ready(function () {
         $content = $('#content');
     });
@@ -65,9 +68,8 @@ var app = (function () {
 
     function write(event) {
         var connectionType = navigator.connection.type.toLowerCase();
-        addContent('Getting file over' + connectionType + '.');
+        addContent('Getting file over [' + connectionType + '].');
 
-        if (connectionType === 'wifi') {
             // Note: The file system has been prefixed as of Google Chrome 12:
             window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
             window.requestFileSystem(
@@ -101,11 +103,6 @@ var app = (function () {
                 function () {
                     addContent('Error: window.requestFileSystem');
                 });
-        }
-        else {
-            addContent('Not on WiFi, file not downloaded.');
-            return;
-        }
     }
 
     function show(event) {
