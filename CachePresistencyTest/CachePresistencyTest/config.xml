@@ -17,4 +17,6 @@
     Erik Bråhammar
   </author>
 
+  <platform name="android" />
+
 </widget>
