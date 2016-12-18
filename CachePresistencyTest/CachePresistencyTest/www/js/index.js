@@ -18,8 +18,8 @@
  */
 var app = (function () {
     var $content;
-    var imagesUrls = [];
-    var imageUris = [
+    var imageFileUrls = [];
+    var imageWebUrls = [
         'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg',
         'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/americanbobtail-main.jpg',
         'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/americancurl-main.jpg',
@@ -61,7 +61,7 @@ var app = (function () {
         'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/toyger-main.jpg',
         'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/turkish-van-cat-main.jpg'
     ];
-    
+
 
 
     $(document).ready(function () {
@@ -90,7 +90,7 @@ var app = (function () {
         $parentElement.find('.saveFile').on('touchstart', write);
         $parentElement.find('.showFile').on('touchstart', show);
 
-        $parentElement.find('.clearContent').on('touchstart', function(event) {
+        $parentElement.find('.clearContent').on('touchstart', function (event) {
             $('#content').html('');
         });
     }
@@ -113,21 +113,23 @@ var app = (function () {
         var connectionType = navigator.connection.type.toLowerCase();
         addContent('Getting file over [' + connectionType + '].');
 
-            // Note: The file system has been prefixed as of Google Chrome 12:
+        // Note: The file system has been prefixed as of Google Chrome 12:
+        imageWebUrls.forEach(function (webUrl) {
             window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
             window.requestFileSystem(
                 LocalFileSystem.PERSISTENT,
                 0,
                 function (fs) {
-                    var fileURL = 'cdvfile://localhost/persistent/file.png';
-                    var uri = encodeURI('https://files.graphiq.com/stories/t2/tiny_cat_12573_8950.jpg');
+                    var imageName = webUrl.split('/').splice(-1);
+                    var fileURL = 'cdvfile://localhost/persistent/img/' + imageName;
+                    var webUri = encodeURI(webUrl);
                     var fileTransfer = new FileTransfer();
 
                     fileTransfer.download(
-                        uri,
+                        webUri,
                         fileURL,
                         function (entry) {
-                            addContent('download complete: ' + entry.fullPath);
+                            imageFileUrls.push(fileURL);
                         },
                         function (error) {
                             addContent('download error source ' + error.source);
@@ -142,24 +144,27 @@ var app = (function () {
                         }
                     );
 
+
                 },
                 function () {
                     addContent('Error: window.requestFileSystem');
                 });
+        });
+
+        addContent('All images downloaded.');
     }
 
     function show(event) {
-        addContent('Showing file.');
+        if (imageFileUrls.length === 0) {
+            addContent('No images to show.');
+            return;
+        }
 
         resolveLocalFileSystemURL(
-            'cdvfile://localhost/persistent/file.png',
+        imageFileUrls[Math.floor(Math.random() * imageFileUrls.length)],
              function (entry) {
-                 var imageUrl = entry.toURL();
-
-                 addContent('Native URI: ' + imageUrl);
-
                  addContent($('<img>', {
-                     src: imageUrl
+                     src: entry.toURL()
                  }), true);
              });
     }
