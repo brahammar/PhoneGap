@@ -19,48 +19,6 @@
 var app = (function () {
     var $content;
     var imageFileUrls = [];
-    var imageWebUrls = [
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/americanbobtail-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/americancurl-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/americanwirehair-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/Balinese-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/bengal-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/birman-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/bombay-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/british-shorthair-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/burmese-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/burmilla-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/Chartreux-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/colorpoint-shorthair-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/cornish-rex-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/cymric-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/devon-rex-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/donskoy-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/Egyptian-Mau-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/exotic-shorthair-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/havana-brown-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/highlander-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/japanese-bobtail-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/khao-manee-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/maine-coon-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/minskin-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/munchkin-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/norwegianforestcat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/ojos-azules-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/oriental-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/Peterbald-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/Ragdoll-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/savannah-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/serengeti-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/siamese-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/siberian-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/snowshoe-cat-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/sokoke-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/Sphynx-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/toyger-main.jpg',
-        'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/turkish-van-cat-main.jpg'
-    ];
 
 
 
@@ -114,14 +72,14 @@ var app = (function () {
         addContent('Getting file over [' + connectionType + '].');
 
         // Note: The file system has been prefixed as of Google Chrome 12:
-        imageWebUrls.forEach(function (webUrl) {
+        dataArrays.imageWebUrlsRandomCats.forEach(function (webUrl, index, source) {
             window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
             window.requestFileSystem(
                 LocalFileSystem.PERSISTENT,
                 0,
                 function (fs) {
                     var imageName = webUrl.split('/').splice(-1);
-                    var fileURL = 'cdvfile://localhost/persistent/img/' + imageName;
+                    var fileURL = 'cdvfile://localhost/persistent/img/' + randomizedString.getLetters(6) + '-' + imageName;
                     var webUri = encodeURI(webUrl);
                     var fileTransfer = new FileTransfer();
 
@@ -130,6 +88,9 @@ var app = (function () {
                         fileURL,
                         function (entry) {
                             imageFileUrls.push(fileURL);
+
+                            if (source.length === index + 1)
+                                addContent('Total number of files: ' + imageFileUrls.length);
                         },
                         function (error) {
                             addContent('download error source ' + error.source);
@@ -143,15 +104,11 @@ var app = (function () {
                             // }
                         }
                     );
-
-
                 },
                 function () {
                     addContent('Error: window.requestFileSystem');
                 });
         });
-
-        addContent('All images downloaded.');
     }
 
     function show(event) {
