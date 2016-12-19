@@ -1,4 +1,68 @@
-﻿var dataArrays = (function () {
+﻿var CordovaTools = (function (logToConsole) {
+    var init = (function() {
+        cLog('CordovaTools loaded.');
+    })();
+
+    function getPresistentStoragePath(onSuccess, onFail) {
+        window.requestFileSystem(window.LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+            cLog('Success: cordovaTools.gerPresistentStoragePath');
+
+            if (typeof onSuccess === 'function')
+                onSuccess(fileSystem.root.toURL());
+        },
+        function (result) {
+            cLog('Faild: cordovaTools.gerPresistentStoragePath(onSuccess, onFail)', result);
+
+            if (typeof onFail === 'function')
+                onFail(result);
+        });
+    }
+
+    function convertNativeToCdvPath(nativeFilePath, onSuccess, onFail) {
+        window.resolveLocalFileSystemURL('cdvfile://localhost/persistent/',
+            function (entry) {
+                cLog('Success: cordovaTools.convertToCdvFilePath');
+
+                if (typeof onSuccess === 'function')
+                    onSuccess(entry.toURL(), entry);
+            },
+            function (result) {
+                cLog('Faild: cordovaTools.convertToCdvFilePath(nativeFilePath, onSuccess, onFail)', result);
+
+                if (typeof onFail === 'function')
+                    onFail(result);
+            });
+    }
+
+    function convertCdvToNativePath(cdvFilePath, onSuccess, onFail) {
+        window.resolveLocalFileSystemURL(cdvFilePath,
+            function (entry) {
+                cLog('Success: cordovaTools.convertToNativePath');
+
+                if (typeof onSuccess === 'function')
+                    onSuccess(entry.toInternalURL(), entry);
+            },
+            function (result) {
+                cLog('Faild: cordovaTools.convertToNativePath(cdvFilePath, onSuccess, onFail)', result);
+
+                if (typeof onFail === 'function')
+                    onFail(result);
+            });
+    }
+
+    function cLog() {
+        if (logToConsole)
+            console.log.apply(this, arguments);
+    }
+
+    return {
+        convertNativeToCdvPath: convertNativeToCdvPath,
+        convertCdvToNativePath: convertCdvToNativePath,
+        getPresistentStoragePath: getPresistentStoragePath
+    }
+});
+
+var dataArrays = (function () {
     var imageWebUrlsRandomCats = [
     'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg',
     'http://purrfectcatbreeds.com/wp-content/uploads/2014/06/americanbobtail-main.jpg',
@@ -54,7 +118,7 @@
     //    var result = [];
 
     //    while (result.length <= amount) {
-            
+
     //    }
     //}
 
@@ -107,3 +171,4 @@ var randomizedString = (function () {
 
 // Credit:
 // http://stackoverflow.com/a/1349426
+// http://stackoverflow.com/a/3914600

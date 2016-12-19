@@ -19,8 +19,8 @@
 var app = (function () {
     var $content;
     var imageFileUrls = [];
-    var imageFolderPath = 'cdvfile://localhost/persistent/img/';
-
+    var imageFolderPathCdv = 'cdvfile://localhost/persistent/img/';
+    var imageFolderPathNative;
 
     $(document).ready(function () {
         $content = $('#content');
@@ -35,8 +35,9 @@ var app = (function () {
     }
 
     function onDeviceReady() {
+        imageFolderPathNative = LocalFileSystem.PERSISTENT;
         receivedEvent('deviceready');
-        loadCachedFiles(imageFolderPath);
+        loadCachedFiles(imageFolderPathCdv);
     }
 
     function receivedEvent(id) {
@@ -98,11 +99,11 @@ var app = (function () {
         dataArrays.imageWebUrlsRandomCats.forEach(function (webUrl, index, source) {
             window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
             window.requestFileSystem(
-                LocalFileSystem.PERSISTENT,
+                imageFolderPathNative,
                 0,
                 function (fs) {
                     var imageName = webUrl.split('/').splice(-1);
-                    var fileURL = imageFolderPath + randomizedString.getLetters(6) + '-' + imageName;
+                    var fileURL = imageFolderPathCdv + randomizedString.getLetters(6) + '-' + imageName;
                     var webUri = encodeURI(webUrl);
                     var fileTransfer = new FileTransfer();
 

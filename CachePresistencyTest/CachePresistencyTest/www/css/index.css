@@ -45,7 +45,7 @@ body {
     left: 50%;
     top: 50%;
     height: 50px; /* text area height */
-    width: 225px; /* text area width */
+    width: 450px; /* text area width */
     text-align: center;
     margin: -115px 0px 0px -112px; /* offset vertical: half of image height and text area height */
     /* offset horizontal: half of text area width */
@@ -74,7 +74,7 @@ h1 {
     border-radius: 4px;
     -webkit-border-radius: 4px;
     color: #FFFFFF;
-    font-size: 12px;
+    font-size: 30px;
     margin: 0px 30px;
     padding: 2px 0px;
 }
